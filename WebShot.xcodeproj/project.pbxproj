@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		ADCF20F11AE8883B007DFDC4 /* com.catalinstan.WebShot.plist in Resources */ = {isa = PBXBuildFile; fileRef = ADCF20F01AE8883B007DFDC4 /* com.catalinstan.WebShot.plist */; };
 		ADD85F5E1AD803B700EC541E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = ADD85F5D1AD803B700EC541E /* AppDelegate.m */; };
 		ADD85F601AD803B700EC541E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = ADD85F5F1AD803B700EC541E /* main.m */; };
 		ADDD2AAF1AE3E8E1004F79D9 /* WSShotViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ADDD2AAE1AE3E8E1004F79D9 /* WSShotViewController.m */; };
@@ -15,6 +16,7 @@
 
 /* Begin PBXFileReference section */
 		A932A791240BE433DB552F05 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		ADCF20F01AE8883B007DFDC4 /* com.catalinstan.WebShot.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = com.catalinstan.WebShot.plist; sourceTree = "<group>"; };
 		ADD85F571AD803B700EC541E /* WebShot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WebShot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ADD85F5B1AD803B700EC541E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		ADD85F5C1AD803B700EC541E /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -88,6 +90,7 @@
 		ADD85F5A1AD803B700EC541E /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				ADCF20F01AE8883B007DFDC4 /* com.catalinstan.WebShot.plist */,
 				ADD85F5B1AD803B700EC541E /* Info.plist */,
 				ADD85F5F1AD803B700EC541E /* main.m */,
 			);
@@ -154,6 +157,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ADCF20F11AE8883B007DFDC4 /* com.catalinstan.WebShot.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

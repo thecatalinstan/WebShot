@@ -171,7 +171,7 @@ NSData* failWithError(NSError* error)
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
         ProcessSerialNumber psn = { 0, kCurrentProcess };
-        TransformProcessType(&psn, kProcessTransformToBackgroundApplication);
+        TransformProcessType(&psn, kProcessTransformToForegroundApplication );
 
         stdOut = [NSFileHandle fileHandleWithStandardOutput];
         stdErr = [NSFileHandle fileHandleWithStandardError];

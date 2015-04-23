@@ -8,35 +8,29 @@
 
 #import "AppDelegate.h"
 
-@interface AppDelegate ()
-
-@property (weak) IBOutlet NSWindow *window;
-@end
-
 @implementation AppDelegate
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
-    NSLog(@"%@", @(__PRETTY_FUNCTION__));
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification {
-    NSLog(@"%@", @(__PRETTY_FUNCTION__));
 }
 
 - (void)application:(FKApplication *)application didReceiveRequest:(NSDictionary *)userInfo
 {
-    NSLog(@"%@", @(__PRETTY_FUNCTION__));
 }
 
 - (void)application:(FKApplication *)application didPrepareResponse:(NSDictionary *)userInfo
 {
-    NSLog(@"%@", @(__PRETTY_FUNCTION__));
+}
+
+- (void)application:(FKApplication *)application presentViewController:(FKViewController *)viewController
+{
+    [viewController presentViewController:NO];
 }
 
 - (void)application:(FKApplication *)application didNotFindViewController:(NSDictionary *)userInfo
 {
-    NSLog(@"%@", @(__PRETTY_FUNCTION__));
-    
     FKHTTPRequest* request = userInfo[FKRequestKey];
     FKHTTPResponse* response = userInfo[FKResponseKey];
     
@@ -47,12 +41,6 @@
     [response writeString: responseString];
     
     [response finish];
-}
-
-- (void)application:(FKApplication *)application presentViewController:(FKViewController *)viewController
-{
-    NSLog(@"%@ %@", @(__PRETTY_FUNCTION__), viewController);
-    [viewController presentViewController:NO];
 }
 
 @end

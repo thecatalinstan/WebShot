@@ -28,6 +28,8 @@
 	<string>Copyright © 2015 Catalin Stan. All rights reserved.</string>
 	<key>NSPrincipalClass</key>
 	<string>FKApplication</string>
+	<key>LSBackgroundOnly</key>
+	<true/>
 	<key>FKConnectionInfo</key>
 	<dict>
 		<key>FKConnectionInfoInterface</key>

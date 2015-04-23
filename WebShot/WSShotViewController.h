@@ -7,10 +7,10 @@
 //
 
 #import <FCGIKit/FCGIKit.h>
+#import <Cocoa/Cocoa.h>
+#import <WebKit/WebKit.h>
 
 @interface WSShotViewController : FKViewController {
-    NSMutableData *outData;
-    NSMutableData *errData;
 }
 
 @property (nonatomic, strong, readonly) NSURL* targetURL;

@@ -9,6 +9,34 @@
 #import "WSShotViewController.h"
 #import <Cocoa/Cocoa.h>
 
+typedef void(^WSSuccessBlock)(NSData* data);
+typedef void(^WSFailureBlock)(NSError *error);
+
+typedef enum _WSAction
+{
+    WSActionScreenshot,
+    WSActionHTML
+} WSAction;
+
+@interface WSShotViewController () {
+    WSSuccessBlock _successBlock;
+    WSFailureBlock _failureBlock;
+    WSAction _action;
+}
+
+@property (strong, nonatomic) WebView *webView;
+
+- (void)fetchHTML;
+- (void)fetchScreenshot;
+- (void)performAction:(WSAction)action;
+
+- (void)performAction:(WSAction)action withURL:(NSURL *)URL success:(WSSuccessBlock)success failure:(WSFailureBlock)failure;
+
+- (void)succeedWithResult:(NSDictionary*)result;
+- (void)failWithError:(NSError*)error;
+
+@end
+
 @implementation WSShotViewController
 
 - (void)viewDidLoad
@@ -22,99 +50,54 @@
 - (NSString *)presentViewController:(BOOL)writeData
 {
     
-    void(^writeDataBlock)(NSData*, BOOL) = ^(NSData* theData, BOOL error) {
-        
-        if ( error ) {
-            [self.response setHTTPStatus:500];
-            [self.response setValue:@"application/json; charset=utf-8" forHTTPHeaderField:@"Content-type"];
-        } else {
-            [self.response setHTTPStatus:200];
-            [self.response setValue:@"image/png" forHTTPHeaderField:@"Content-type"];
-            [self.response setValue:@"inline" forHTTPHeaderField:@"Content-disposition"];
-        }
-
-        [self.response setValue:@(theData.length).stringValue forHTTPHeaderField:@"Content-length"];
-        
-        [self.response write:theData];
-        [self.response finish];
-    };
-    
-    
     @try {
         
         if ( self.targetURL == nil ) {
             @throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"No URL was specified." userInfo:self.request.get];
         }
-
-        outData = [[NSMutableData alloc] init];
-        errData = [[NSMutableData alloc] init];
-
-        NSPipe *stdOutPipe = [NSPipe pipe];
-        [stdOutPipe.fileHandleForReading setReadabilityHandler:^(NSFileHandle *file) {
-            [outData appendData:file.availableData];
-        }];
         
-        NSPipe *stdErrPipe = [NSPipe pipe];
-        [stdErrPipe.fileHandleForReading setReadabilityHandler:^(NSFileHandle *file) {
-            [errData appendData:file.availableData];
-        }];
-        
-        NSTask *captureTask = [[NSTask alloc] init];
-        captureTask.launchPath = [[[[NSBundle mainBundle].bundlePath stringByAppendingPathComponent:@"Contents"] stringByAppendingPathComponent:@"MacOS"] stringByAppendingPathComponent:@"Capture"];
-        captureTask.arguments = @[self.targetURL.absoluteString];
-        captureTask.standardOutput = stdOutPipe;
-        captureTask.standardError = stdErrPipe;
-
-        NSDictionary* cmdInfo = @{@"launchPath": captureTask.launchPath, @"arguments": captureTask.arguments != nil ? captureTask.arguments : @"nil"};
-        NSLog(@"%@", cmdInfo);
-        
-        [captureTask setTerminationHandler:^(NSTask *task) {
-            stdOutPipe.fileHandleForReading.readabilityHandler = nil;
-            [stdOutPipe.fileHandleForReading closeFile];
-            
-            stdErrPipe.fileHandleForReading.readabilityHandler = nil;
-            [stdErrPipe.fileHandleForReading closeFile];
-        }];
-        
-        [captureTask launch];
-        [captureTask waitUntilExit];
-        
-        if (captureTask.terminationStatus != EXIT_SUCCESS) {
-            NSString* errorString = [[[NSString alloc] initWithData:errData encoding:NSUTF8StringEncoding] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-            NSData* responseData = [self failWithError:[NSError errorWithDomain:[NSBundle mainBundle].bundleIdentifier code:-1 userInfo:@{NSUnderlyingErrorKey: [NSException exceptionWithName:NSInvalidArchiveOperationException reason:errorString userInfo:@{@"cmd": cmdInfo}]}]];
-            writeDataBlock(responseData, YES);
-            return nil;
+        if ( self.targetURL.scheme == nil ) {
+            _targetURL = [NSURL URLWithString:[@"http://" stringByAppendingString:self.targetURL.absoluteString]];
+        } else if ( ![self.targetURL.scheme isEqualToString:@"http"] && ![self.targetURL.scheme isEqualToString:@"https"] ) {
+            @throw [NSException exceptionWithName:NSInvalidArgumentException reason:[NSString stringWithFormat: @"Unsupported URL scheme: %@", self.targetURL.scheme] userInfo:self.request.get];
         }
         
-        if ( outData == nil) {
-            NSData* responseData = [self failWithError:[NSError errorWithDomain:[NSBundle mainBundle].bundleIdentifier code:-1 userInfo:@{NSUnderlyingErrorKey: [NSException exceptionWithName:NSInvalidArchiveOperationException reason:@"Task returned blank" userInfo:@{@"cmd": cmdInfo}]}]];
-            writeDataBlock(responseData, YES);
-       return nil;
+        if ( self.request.get[@"html"] != nil ) {
+            [self performSelectorOnMainThread:@selector(fetchHTML) withObject:nil waitUntilDone:NO];
+        } else {
+            [self performSelectorOnMainThread:@selector(fetchScreenshot) withObject:nil waitUntilDone:NO];
         }
-        
-        writeDataBlock(outData.copy, NO);
         
     } @catch (NSException *ex) {
         
-        NSData* responseData = [self failWithError:[NSError errorWithDomain:[NSBundle mainBundle].bundleIdentifier code:-1 userInfo:@{NSUnderlyingErrorKey: ex}]];
-        writeDataBlock(responseData, YES);
+        [self failWithError:[NSError errorWithDomain:[NSBundle mainBundle].bundleIdentifier code:-1 userInfo:@{NSUnderlyingErrorKey: ex}]];
         
     }
     
     return nil;
-    
-    
 }
 
 #pragma mark - Responses
 
-- (NSData*)succeedWithResult:(NSDictionary*)result
+- (void)succeedWithResult:(NSDictionary*)result
 {
-    NSData* imageData = result[FKResultKey];
-    return imageData;
+    NSData* responseData = result[FKResultKey];
+    NSString* contentType = @"text/plain";
+    if (_action == WSActionScreenshot) {
+        contentType = @"image/png";
+    } if (_action == WSActionHTML) {
+        contentType = @"text/html";
+    }
+    
+    [self.response setHTTPStatus:200];
+    [self.response setValue:contentType forHTTPHeaderField:@"Content-type"];
+    [self.response setValue:@"inline" forHTTPHeaderField:@"Content-disposition"];
+    [self.response setValue:@(responseData.length).stringValue forHTTPHeaderField:@"Content-length"];
+    [self.response write:responseData];
+    [self.response finish];
 }
 
-- (NSData*)failWithError:(NSError*)error
+- (void)failWithError:(NSError*)error
 {
     NSString* errorDescription;
     NSString* errorTitle;
@@ -147,7 +130,6 @@
         errorUserInfo = error.userInfo;
     }
     
-    [self.response setHTTPStatus:500];
     
     NSMutableDictionary* outputDictionary = [NSMutableDictionary dictionary];
     outputDictionary[@"status"] = @(NO);
@@ -157,8 +139,113 @@
                                    @"description": errorDescription,
                                    };
     
-    return [NSJSONSerialization dataWithJSONObject:outputDictionary.copy options:0 error:&error];
+    NSData* responseData = [NSJSONSerialization dataWithJSONObject:outputDictionary.copy options:0 error:&error];
+
+    [self.response setHTTPStatus:500];
+    [self.response setValue:@"application/json; charset=utf-8" forHTTPHeaderField:@"Content-type"];
+    [self.response write:responseData];
+    [self.response finish];
 }
 
+#pragma mark - Actions
+
+- (void)fetchHTML
+{
+    [self performAction:WSActionHTML];
+}
+
+- (void)fetchScreenshot
+{
+    [self performAction:WSActionScreenshot];
+}
+
+- (void)performAction:(WSAction)action
+{
+    [self performAction:action withURL:self.targetURL success:^(NSData *data) {
+        if ( data.length == 0 ) {
+            NSError* error = [NSError errorWithDomain:[NSBundle mainBundle].bundleIdentifier code:-1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"No data was returned from the URL: %@", self.targetURL]}];
+            [self failWithError:error];
+        } else {
+            [self succeedWithResult:@{FKResultKey:data}];
+        }
+    } failure:^(NSError *error) {
+        [self failWithError:error];
+    }];
+}
+
+- (void)performAction:(WSAction)action withURL:(NSURL *)URL success:(WSSuccessBlock)success failure:(WSFailureBlock)failure {
+    
+    _action = action;
+    _successBlock = success;
+    _failureBlock = failure;
+    
+    self.webView = [[WebView alloc] init];
+    self.webView.frame = NSMakeRect(0, 0, 1280, 3840);
+    self.webView.frameLoadDelegate = self;
+    self.webView.downloadDelegate = self;
+    self.webView.mainFrameURL = URL.absoluteString;
+}
+
+#pragma mark - WebViewFeameLoading Delegate
+
+- (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
+{
+    if (frame != sender.mainFrame) {
+        return;
+    }
+    
+    NSData* returnData;
+    
+    if ( _action == WSActionHTML ) {
+        
+        NSString* renderedContent = ((DOMHTMLElement*)frame.DOMDocument.documentElement).outerHTML;
+        returnData = [renderedContent dataUsingEncoding:NSUTF8StringEncoding];
+        
+    } else if ( _action == WSActionScreenshot ) {
+        
+        NSView *webFrameViewDocView = frame.frameView.documentView;
+        CGFloat actualHeight;
+        DOMNodeList* nodes = [frame.DOMDocument getElementsByTagName:@"body"];
+        if ( nodes.length == 1 ) {
+            DOMElement* body = (DOMElement*)[nodes item:0];
+            actualHeight = body.offsetHeight;
+        } else {
+            actualHeight = @(frame.DOMDocument.documentElement.offsetHeight).floatValue;
+        }
+        
+        NSRect cacheRect = webFrameViewDocView.bounds;
+        
+        NSSize imgSize = cacheRect.size;
+        imgSize.height = MIN(MAX(actualHeight, 800), 3840);
+        
+        NSRect srcRect = NSZeroRect;
+        srcRect.size = imgSize;
+        srcRect.origin.y = cacheRect.size.height - imgSize.height;
+        
+        NSRect destRect = NSZeroRect;
+        destRect.size = imgSize;
+        
+        NSBitmapImageRep *bitmapRep = [webFrameViewDocView bitmapImageRepForCachingDisplayInRect:cacheRect];
+        [webFrameViewDocView cacheDisplayInRect:cacheRect toBitmapImageRep:bitmapRep];
+        
+        NSImage *image = [[NSImage alloc] initWithSize:imgSize];
+        [image lockFocus];
+        [bitmapRep drawInRect:destRect fromRect:srcRect operation:NSCompositeCopy fraction:1.0 respectFlipped:YES hints:nil];
+        [image unlockFocus];
+        
+        NSBitmapImageRep* rep = [[NSBitmapImageRep alloc] initWithData:image.TIFFRepresentation];;
+        returnData = [rep representationUsingType:NSPNGFileType properties:nil];
+    }
+    
+    _successBlock(returnData);
+}
+
+- (void)webView:(WebView *)sender didFailLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
+{
+    if (frame != sender.mainFrame){
+        return;
+    }
+    _failureBlock(error);
+}
 
 @end

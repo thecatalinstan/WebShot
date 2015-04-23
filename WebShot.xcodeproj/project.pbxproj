@@ -7,39 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		AD0BEBC71AE81B41000F2E4E /* Capture in CopyFiles */ = {isa = PBXBuildFile; fileRef = AD0BEBC21AE7E91D000F2E4E /* Capture */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		ADD85F5E1AD803B700EC541E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = ADD85F5D1AD803B700EC541E /* AppDelegate.m */; };
 		ADD85F601AD803B700EC541E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = ADD85F5F1AD803B700EC541E /* main.m */; };
 		ADDD2AAF1AE3E8E1004F79D9 /* WSShotViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ADDD2AAE1AE3E8E1004F79D9 /* WSShotViewController.m */; };
 		BC08A4B488845B4B69C3F9C9 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A932A791240BE433DB552F05 /* Pods.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		AD0BEBC11AE7E91D000F2E4E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = AD0BEBBD1AE7E91B000F2E4E /* Capture.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = AD0BEBB31AE7E91B000F2E4E;
-			remoteInfo = Capture;
-		};
-/* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		AD0BEBC61AE81B2D000F2E4E /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 6;
-			files = (
-				AD0BEBC71AE81B41000F2E4E /* Capture in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
 		A932A791240BE433DB552F05 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		AD0BEBBD1AE7E91B000F2E4E /* Capture.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Capture.xcodeproj; path = Capture/Capture.xcodeproj; sourceTree = "<group>"; };
 		ADD85F571AD803B700EC541E /* WebShot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WebShot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ADD85F5B1AD803B700EC541E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		ADD85F5C1AD803B700EC541E /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -80,18 +55,9 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
-		AD0BEBBE1AE7E91B000F2E4E /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				AD0BEBC21AE7E91D000F2E4E /* Capture */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		ADD85F4E1AD803B700EC541E = {
 			isa = PBXGroup;
 			children = (
-				AD0BEBBD1AE7E91B000F2E4E /* Capture.xcodeproj */,
 				ADD85F591AD803B700EC541E /* WebShot */,
 				ADD85F581AD803B700EC541E /* Products */,
 				47B4A15EF7C77661911C1697 /* Pods */,
@@ -141,7 +107,6 @@
 				ADD85F551AD803B700EC541E /* Resources */,
 				3BA774CDAC5CB33E78C77489 /* Embed Pods Frameworks */,
 				08EAB90274C2E298B1B6BF4F /* Copy Pods Resources */,
-				AD0BEBC61AE81B2D000F2E4E /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -177,28 +142,12 @@
 			mainGroup = ADD85F4E1AD803B700EC541E;
 			productRefGroup = ADD85F581AD803B700EC541E /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = AD0BEBBE1AE7E91B000F2E4E /* Products */;
-					ProjectRef = AD0BEBBD1AE7E91B000F2E4E /* Capture.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				ADD85F561AD803B700EC541E /* WebShot */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		AD0BEBC21AE7E91D000F2E4E /* Capture */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = Capture;
-			remoteRef = AD0BEBC11AE7E91D000F2E4E /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		ADD85F551AD803B700EC541E /* Resources */ = {
@@ -358,6 +307,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = WebShot/Info.plist;
+				INSTALL_PATH = /WebApplications;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -370,6 +320,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = WebShot/Info.plist;
+				INSTALL_PATH = /WebApplications;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

@@ -42,14 +42,18 @@ typedef enum _WSAction
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+#if DEBUG
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+#endif
     NSString* targetURLString = [self.request.get[@"url"] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     _targetURL = [NSURL URLWithString:targetURLString];
 }
 
 - (NSString *)presentViewController:(BOOL)writeData
 {
-    
+#if DEBUG
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+#endif
     @try {
         
         if ( self.targetURL == nil ) {
@@ -81,6 +85,9 @@ typedef enum _WSAction
 
 - (void)succeedWithResult:(NSDictionary*)result
 {
+#if DEBUG
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+#endif
     NSData* responseData = result[FKResultKey];
     NSString* contentType = @"text/plain";
     if (_action == WSActionScreenshot) {
@@ -99,6 +106,9 @@ typedef enum _WSAction
 
 - (void)failWithError:(NSError*)error
 {
+#if DEBUG
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+#endif
     NSString* errorDescription;
     NSString* errorTitle;
     NSDictionary* errorUserInfo;
@@ -151,17 +161,30 @@ typedef enum _WSAction
 
 - (void)fetchHTML
 {
+#if DEBUG
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+#endif
     [self performAction:WSActionHTML];
 }
 
 - (void)fetchScreenshot
 {
+#if DEBUG
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+#endif
     [self performAction:WSActionScreenshot];
 }
 
 - (void)performAction:(WSAction)action
 {
+#if DEBUG
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+#endif
+    
     [self performAction:action withURL:self.targetURL success:^(NSData *data) {
+#if DEBUG
+        NSLog(@"%s", __PRETTY_FUNCTION__);
+#endif
         if ( data.length == 0 ) {
             NSError* error = [NSError errorWithDomain:[NSBundle mainBundle].bundleIdentifier code:-1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"No data was returned from the URL: %@", self.targetURL]}];
             [self failWithError:error];
@@ -169,21 +192,33 @@ typedef enum _WSAction
             [self succeedWithResult:@{FKResultKey:data}];
         }
     } failure:^(NSError *error) {
+#if DEBUG
+        NSLog(@"%s", __PRETTY_FUNCTION__);
+#endif
         [self failWithError:error];
     }];
 }
 
 - (void)performAction:(WSAction)action withURL:(NSURL *)URL success:(WSSuccessBlock)success failure:(WSFailureBlock)failure {
     
+#if DEBUG
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+#endif
+    
     _action = action;
     _successBlock = success;
     _failureBlock = failure;
     
     self.webView = [[WebView alloc] init];
-    self.webView.frame = NSMakeRect(0, 0, 1280, 3840);
+    self.webView.frame = NSMakeRect(0, 0, 1280, 10);
     self.webView.frameLoadDelegate = self;
     self.webView.downloadDelegate = self;
-    self.webView.mainFrameURL = URL.absoluteString;
+    self.webView.continuousSpellCheckingEnabled = NO;
+    self.webView.mainFrame.frameView.allowsScrolling = NO;
+
+    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:URL cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:10.0f];
+    request.HTTPShouldHandleCookies = NO;
+    [self.webView.mainFrame loadRequest:request];
 }
 
 #pragma mark - WebViewFeameLoading Delegate
@@ -193,55 +228,60 @@ typedef enum _WSAction
     if (frame != sender.mainFrame) {
         return;
     }
+ 
+#if DEBUG
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+#endif
     
-    NSData* returnData;
-    
-    if ( _action == WSActionHTML ) {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         
-        NSString* renderedContent = ((DOMHTMLElement*)frame.DOMDocument.documentElement).outerHTML;
-        returnData = [renderedContent dataUsingEncoding:NSUTF8StringEncoding];
+        NSData* returnData;
         
-    } else if ( _action == WSActionScreenshot ) {
-        
-        NSView *webFrameViewDocView = frame.frameView.documentView;
-        CGFloat actualHeight;
-        DOMNodeList* nodes = [frame.DOMDocument getElementsByTagName:@"body"];
-        if ( nodes.length == 1 ) {
-            DOMElement* body = (DOMElement*)[nodes item:0];
-            actualHeight = body.offsetHeight;
-        } else {
-            actualHeight = @(frame.DOMDocument.documentElement.offsetHeight).floatValue;
+        if ( _action == WSActionHTML ) {
+            
+            NSString* renderedContent = ((DOMHTMLElement*)frame.DOMDocument.documentElement).outerHTML;
+            returnData = [renderedContent dataUsingEncoding:NSUTF8StringEncoding];
+            
+        } else if ( _action == WSActionScreenshot ) {
+            
+            NSView *webFrameViewDocView = frame.frameView.documentView;
+            NSRect webFrameRect = webFrameViewDocView.frame;
+            NSRect newWebViewRect = NSMakeRect(0, 0, NSWidth(webFrameRect), NSHeight(webFrameRect) == 0 ? frame.webView.fittingSize.height : NSHeight(webFrameRect));
+            
+            NSRect cacheRect = newWebViewRect;
+            NSLog(@"%@", NSStringFromRect(cacheRect));
+            
+            NSSize imgSize = cacheRect.size;
+            //        imgSize.height = MIN(MAX(actualHeight, 800), 3840);
+            
+            NSRect srcRect = NSZeroRect;
+            srcRect.size = imgSize;
+            srcRect.origin.y = cacheRect.size.height - imgSize.height;
+            
+            NSRect destRect = NSZeroRect;
+            destRect.size = imgSize;
+            
+            NSBitmapImageRep *bitmapRep = [webFrameViewDocView bitmapImageRepForCachingDisplayInRect:cacheRect];
+            [webFrameViewDocView cacheDisplayInRect:cacheRect toBitmapImageRep:bitmapRep];
+            
+            NSImage *image = [[NSImage alloc] initWithSize:imgSize];
+            [image lockFocus];
+            [bitmapRep drawInRect:destRect fromRect:srcRect operation:NSCompositeCopy fraction:1.0 respectFlipped:YES hints:nil];
+            [image unlockFocus];
+            
+            NSBitmapImageRep* rep = [[NSBitmapImageRep alloc] initWithData:image.TIFFRepresentation];;
+            returnData = [rep representationUsingType:NSPNGFileType properties:nil];
         }
         
-        NSRect cacheRect = webFrameViewDocView.bounds;
-        
-        NSSize imgSize = cacheRect.size;
-        imgSize.height = MIN(MAX(actualHeight, 800), 3840);
-        
-        NSRect srcRect = NSZeroRect;
-        srcRect.size = imgSize;
-        srcRect.origin.y = cacheRect.size.height - imgSize.height;
-        
-        NSRect destRect = NSZeroRect;
-        destRect.size = imgSize;
-        
-        NSBitmapImageRep *bitmapRep = [webFrameViewDocView bitmapImageRepForCachingDisplayInRect:cacheRect];
-        [webFrameViewDocView cacheDisplayInRect:cacheRect toBitmapImageRep:bitmapRep];
-        
-        NSImage *image = [[NSImage alloc] initWithSize:imgSize];
-        [image lockFocus];
-        [bitmapRep drawInRect:destRect fromRect:srcRect operation:NSCompositeCopy fraction:1.0 respectFlipped:YES hints:nil];
-        [image unlockFocus];
-        
-        NSBitmapImageRep* rep = [[NSBitmapImageRep alloc] initWithData:image.TIFFRepresentation];;
-        returnData = [rep representationUsingType:NSPNGFileType properties:nil];
-    }
-    
-    _successBlock(returnData);
+        _successBlock(returnData);
+    });
 }
 
 - (void)webView:(WebView *)sender didFailLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
 {
+#if DEBUG
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+#endif
     if (frame != sender.mainFrame){
         return;
     }

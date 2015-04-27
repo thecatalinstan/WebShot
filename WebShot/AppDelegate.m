@@ -26,11 +26,17 @@
 
 - (void)application:(FKApplication *)application presentViewController:(FKViewController *)viewController
 {
+#if DEBUG
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+#endif
     [viewController presentViewController:NO];
 }
 
 - (void)application:(FKApplication *)application didNotFindViewController:(NSDictionary *)userInfo
 {
+#if DEBUG
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+#endif
     FKHTTPRequest* request = userInfo[FKRequestKey];
     FKHTTPResponse* response = userInfo[FKResponseKey];
     

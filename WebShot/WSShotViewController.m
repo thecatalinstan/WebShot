@@ -18,13 +18,14 @@ typedef enum _WSAction
     WSActionHTML
 } WSAction;
 
-@interface WSShotViewController () {
+@interface WSShotViewController () <WebFrameLoadDelegate, WebDownloadDelegate> {
     WSSuccessBlock _successBlock;
     WSFailureBlock _failureBlock;
     WSAction _action;
 }
 
 @property (strong, nonatomic) WebView *webView;
+@property (strong, nonatomic) NSWindow* window;
 
 - (void)fetchHTML;
 - (void)fetchScreenshot;
@@ -209,12 +210,15 @@ typedef enum _WSAction
     _successBlock = success;
     _failureBlock = failure;
     
-    self.webView = [[WebView alloc] init];
-    self.webView.frame = NSMakeRect(0, 0, 1280, 10);
+    
+    self.webView = [[WebView alloc] initWithFrame:NSMakeRect(0, 0, 1280, 10)];
     self.webView.frameLoadDelegate = self;
     self.webView.downloadDelegate = self;
     self.webView.continuousSpellCheckingEnabled = NO;
     self.webView.mainFrame.frameView.allowsScrolling = NO;
+    
+    self.window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 1280, 10) styleMask:NSTexturedBackgroundWindowMask backing:NSBackingStoreBuffered defer:YES screen:nil];
+    self.window.contentView = self.webView;
 
     NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:URL cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:10.0f];
     request.HTTPShouldHandleCookies = NO;
@@ -234,7 +238,6 @@ typedef enum _WSAction
 #endif
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        
         NSData* returnData;
         
         if ( _action == WSActionHTML ) {
@@ -270,7 +273,8 @@ typedef enum _WSAction
             [image unlockFocus];
             
             NSBitmapImageRep* rep = [[NSBitmapImageRep alloc] initWithData:image.TIFFRepresentation];;
-            returnData = [rep representationUsingType:NSPNGFileType properties:nil];
+            
+            returnData = [rep representationUsingType:NSPNGFileType properties:@{}];
         }
         
         _successBlock(returnData);

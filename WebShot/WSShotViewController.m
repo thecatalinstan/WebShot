@@ -9,7 +9,7 @@
 #import "WSShotViewController.h"
 #import <Cocoa/Cocoa.h>
 
-typedef void(^WSSuccessBlock)(NSData* data);
+typedef void(^WSSuccessBlock)(NSData* data, BOOL shouldCache);
 typedef void(^WSFailureBlock)(NSError *error);
 
 typedef enum _WSAction
@@ -39,10 +39,22 @@ typedef enum _WSAction
 
 - (void)succeedWithResult:(NSDictionary*)result;
 - (void)failWithError:(NSError*)error;
+    
++ (NSMutableDictionary*)cachedFiles;
 
 @end
 
 @implementation WSShotViewController
+    
++ (NSMutableDictionary *)cachedFiles
+{
+    static NSMutableDictionary* cachedFiles;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        cachedFiles = [NSMutableDictionary dictionary];
+    });
+    return cachedFiles;
+}
 
 - (void)viewDidLoad
 {
@@ -145,6 +157,10 @@ typedef enum _WSAction
         errorUserInfo = error.userInfo;
     }
     
+    if ( errorUserInfo == nil ) {
+        errorUserInfo = @{};
+    }
+    
     
     NSMutableDictionary* outputDictionary = [NSMutableDictionary dictionary];
     outputDictionary[@"status"] = @(NO);
@@ -152,6 +168,7 @@ typedef enum _WSAction
                                    @"domain": errorTitle,
                                    @"code": @(errorCode),
                                    @"description": errorDescription,
+                                   @"userInfo": errorUserInfo,
                                    };
     
     NSData* responseData = [NSJSONSerialization dataWithJSONObject:outputDictionary.copy options:0 error:&error];
@@ -186,14 +203,19 @@ typedef enum _WSAction
     NSLog(@"%s", __PRETTY_FUNCTION__);
 #endif
     
-    [self performAction:action withURL:self.targetURL success:^(NSData *data) {
+    [self performAction:action withURL:self.targetURL success:^(NSData *data, BOOL shouldCache) {
+
 #if DEBUG
         NSLog(@"%s", __PRETTY_FUNCTION__);
 #endif
+        
         if ( data.length == 0 ) {
             NSError* error = [NSError errorWithDomain:[NSBundle mainBundle].bundleIdentifier code:-1 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"No data was returned from the URL: %@", self.targetURL]}];
             [self failWithError:error];
         } else {
+            if ( shouldCache ) {
+                [self cacheResult:data forAction:action forURL:self.targetURL];
+            }
             [self succeedWithResult:@{FKResultKey:data}];
         }
     } failure:^(NSError *error) {
@@ -214,19 +236,22 @@ typedef enum _WSAction
     _successBlock = success;
     _failureBlock = failure;
     
+    NSData* cachedResult = [self cachedResultForAction:action forURL:URL];
     
-    self.webView = [[WebView alloc] initWithFrame:NSMakeRect(0, 0, 1280, 10)];
-    self.webView.frameLoadDelegate = self;
-    self.webView.downloadDelegate = self;
-    self.webView.continuousSpellCheckingEnabled = NO;
-    self.webView.mainFrame.frameView.allowsScrolling = NO;
+    if ( cachedResult != nil ) {
+        _successBlock(cachedResult, NO);
+    } else {
     
-//    self.window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 1280, 10) styleMask:NSTexturedBackgroundWindowMask backing:NSBackingStoreBuffered defer:YES screen:nil];
-//    self.window.contentView = self.webView;
-
-    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:URL cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:10.0f];
-    request.HTTPShouldHandleCookies = YES;
-    [self.webView.mainFrame loadRequest:request.copy];
+        self.webView = [[WebView alloc] initWithFrame:NSMakeRect(0, 0, 1280, 10)];
+        self.webView.frameLoadDelegate = self;
+        self.webView.downloadDelegate = self;
+        self.webView.continuousSpellCheckingEnabled = NO;
+        self.webView.mainFrame.frameView.allowsScrolling = NO;
+        
+        NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:URL cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:10.0f];
+        request.HTTPShouldHandleCookies = YES;
+        [self.webView.mainFrame loadRequest:request.copy];
+    }
 }
 
 #pragma mark - WebViewFeameLoading Delegate
@@ -282,7 +307,7 @@ typedef enum _WSAction
             returnData = [rep representationUsingType:NSPNGFileType properties:@{}];
         }
         
-        _successBlock(returnData);
+        _successBlock(returnData, YES);
     });
 }
     
@@ -320,5 +345,70 @@ typedef enum _WSAction
     }
     _failureBlock(error);
 }
+    
+#pragma mark - Cache
+    
+- (NSString*)cacheDir:(WSAction)action
+{
+    NSString* cacheDirName = [NSTemporaryDirectory() stringByAppendingPathComponent:[NSBundle mainBundle].bundleIdentifier];
+    cacheDirName = [cacheDirName stringByAppendingPathComponent:(action == WSActionHTML ? @"HTMLs" : @"Screenshots")];
+    if ( ![[NSFileManager defaultManager] fileExistsAtPath:cacheDirName isDirectory:nil] ) {
+        [[NSFileManager defaultManager] createDirectoryAtPath:cacheDirName withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+    return cacheDirName;
+}
+    
+- (NSData*)cachedResultForAction:(WSAction)action forURL:(NSURL*)URL
+{
+#if DEBUG
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+#endif
+    
+    NSString* cacheDirName = [self cacheDir:action];
+    
+    NSString* fileName;
+    @synchronized([WSShotViewController cachedFiles]) {
+        fileName = [WSShotViewController cachedFiles][URL.absoluteString];
+    }
 
+    if ( fileName == nil ) {
+        return nil;
+    } else {
+        NSString* filePath = [cacheDirName stringByAppendingPathComponent:fileName];
+        if ( ![[NSFileManager defaultManager] fileExistsAtPath:filePath isDirectory:nil] ) {
+            return nil;
+        } else {
+            return [NSData dataWithContentsOfFile:filePath options:NSDataReadingMappedIfSafe error:nil];
+        }
+    }
+    
+}
+    
+- (void)cacheResult:(NSData*)result forAction:(WSAction)action forURL:(NSURL*)URL
+{
+#if DEBUG
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+#endif
+    
+    NSString* cacheDirName = [self cacheDir:action];
+
+    NSString* fileName;
+    @synchronized([WSShotViewController cachedFiles]) {
+        fileName = [WSShotViewController cachedFiles][URL.absoluteString];
+    }
+    
+    if ( fileName != nil ) {
+        return;
+    } else {
+        fileName = [[NSProcessInfo processInfo] globallyUniqueString];
+        NSString* filePath = [cacheDirName stringByAppendingPathComponent:fileName];
+        
+        [result writeToFile:filePath atomically:YES];
+        
+        @synchronized([WSShotViewController cachedFiles]) {
+            [WSShotViewController cachedFiles][URL.absoluteString] = fileName;
+        }
+    }
+}
+    
 @end

@@ -221,25 +221,26 @@ typedef enum _WSAction
     self.webView.continuousSpellCheckingEnabled = NO;
     self.webView.mainFrame.frameView.allowsScrolling = NO;
     
-    self.window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 1280, 10) styleMask:NSTexturedBackgroundWindowMask backing:NSBackingStoreBuffered defer:YES screen:nil];
-    self.window.contentView = self.webView;
+//    self.window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 1280, 10) styleMask:NSTexturedBackgroundWindowMask backing:NSBackingStoreBuffered defer:YES screen:nil];
+//    self.window.contentView = self.webView;
 
     NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:URL cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:10.0f];
-    request.HTTPShouldHandleCookies = NO;
-    [self.webView.mainFrame loadRequest:request];
+    request.HTTPShouldHandleCookies = YES;
+    [self.webView.mainFrame loadRequest:request.copy];
 }
 
 #pragma mark - WebViewFeameLoading Delegate
 
 - (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame
 {
-    if (frame != sender.mainFrame) {
-        return;
-    }
- 
+    
 #if DEBUG
     NSLog(@"%s", __PRETTY_FUNCTION__);
 #endif
+    
+    if (frame != sender.mainFrame) {
+        return;
+    }
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         NSData* returnData;
@@ -284,12 +285,36 @@ typedef enum _WSAction
         _successBlock(returnData);
     });
 }
+    
+- (void)webView:(WebView *)sender willPerformClientRedirectToURL:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date forFrame:(WebFrame *)frame
+{
+#if DEBUG
+    NSLog(@"%s", __PRETTY_FUNCTION__);
+#endif
+}
+    
+- (void)webView:(WebView *)sender didReceiveServerRedirectForProvisionalLoadForFrame:(WebFrame *)frame
+{
+#if DEBUG
+        NSLog(@"%s %@", __PRETTY_FUNCTION__, frame.DOMDocument.URL);
+#endif
+
+}
+    
+- (void)webView:(WebView *)sender didCommitLoadForFrame:(WebFrame *)frame
+{
+#if DEBUG
+        NSLog(@"%s", __PRETTY_FUNCTION__);
+#endif
+
+}
 
 - (void)webView:(WebView *)sender didFailLoadWithError:(NSError *)error forFrame:(WebFrame *)frame
 {
 #if DEBUG
     NSLog(@"%s", __PRETTY_FUNCTION__);
 #endif
+    
     if (frame != sender.mainFrame){
         return;
     }

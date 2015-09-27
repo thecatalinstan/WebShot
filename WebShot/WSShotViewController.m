@@ -18,7 +18,11 @@ typedef enum _WSAction
     WSActionHTML
 } WSAction;
 
+#ifdef __MAC_10_11
 @interface WSShotViewController () <WebFrameLoadDelegate, WebDownloadDelegate> {
+#else
+@interface WSShotViewController () {
+#endif
     WSSuccessBlock _successBlock;
     WSFailureBlock _failureBlock;
     WSAction _action;

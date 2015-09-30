@@ -10,9 +10,9 @@
 #import <Cocoa/Cocoa.h>
 #import <WebKit/WebKit.h>
 
-@interface WSShotViewController : FKViewController {
-}
+@interface WSShotViewController : FKViewController
 
 @property (nonatomic, strong, readonly) NSURL* targetURL;
+@property (readonly) BOOL ignoreCache;
 
 @end

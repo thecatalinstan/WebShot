@@ -7,7 +7,6 @@
 //
 
 #import "WSShotViewController.h"
-#import <Cocoa/Cocoa.h>
 
 typedef void(^WSSuccessBlock)(NSData* data, BOOL shouldCache);
 typedef void(^WSFailureBlock)(NSError *error);
@@ -64,6 +63,8 @@ typedef enum _WSAction
 #endif
     NSString* targetURLString = [self.request.get[@"url"] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     _targetURL = [NSURL URLWithString:targetURLString];
+    
+    _ignoreCache = self.request.get[@"nocache"] != nil;
 }
 
 - (NSString *)presentViewController:(BOOL)writeData
@@ -363,6 +364,10 @@ typedef enum _WSAction
 #if DEBUG
     NSLog(@"%s", __PRETTY_FUNCTION__);
 #endif
+    
+    if ( self.ignoreCache ) {
+        return nil;
+    }
     
     NSString* cacheDirName = [self cacheDir:action];
     

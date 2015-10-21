@@ -11,7 +11,7 @@
 		ADD85F5E1AD803B700EC541E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = ADD85F5D1AD803B700EC541E /* AppDelegate.m */; };
 		ADD85F601AD803B700EC541E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = ADD85F5F1AD803B700EC541E /* main.m */; };
 		ADDD2AAF1AE3E8E1004F79D9 /* WSShotViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ADDD2AAE1AE3E8E1004F79D9 /* WSShotViewController.m */; };
-		BC08A4B488845B4B69C3F9C9 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A932A791240BE433DB552F05 /* Pods.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		BC08A4B488845B4B69C3F9C9 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A932A791240BE433DB552F05 /* Pods.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -80,9 +80,9 @@
 			children = (
 				ADD85F5C1AD803B700EC541E /* AppDelegate.h */,
 				ADD85F5D1AD803B700EC541E /* AppDelegate.m */,
-				ADD85F5A1AD803B700EC541E /* Supporting Files */,
 				ADDD2AAD1AE3E8E1004F79D9 /* WSShotViewController.h */,
 				ADDD2AAE1AE3E8E1004F79D9 /* WSShotViewController.m */,
+				ADD85F5A1AD803B700EC541E /* Supporting Files */,
 			);
 			path = WebShot;
 			sourceTree = "<group>";

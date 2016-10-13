@@ -6,11 +6,10 @@
 //  Copyright (c) 2015 Catalin Stan. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
-#import <FCGIKit/FCGIKit.h>
+#import <Criollo/Criollo.h>
 
-#import "AppDelegate.h"
+#import "WSAppDelegate.h"
 
 int main(int argc, const char * argv[]) {
-    return FKApplicationMain(argc, argv, [AppDelegate new]);
+    return CRApplicationMain(argc, argv, [WSAppDelegate new]);
 }

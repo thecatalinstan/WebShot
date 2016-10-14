@@ -80,6 +80,16 @@
 
             controller.webshot.URL = controller.targetURL;
 
+            if ( request.query[@"w"] ) {
+                CGFloat width = MIN(MAX([request.query[@"w"] floatValue], 320), 3840);
+                controller.webshot.browserWidth = width;
+            }
+
+            if ( request.query[@"t"] ) {
+                NSTimeInterval timeout = MIN(MAX([request.query[@"t"] doubleValue], 1), 60);
+                controller.webshot.renderingTimeout = timeout;
+            }
+
             if ( request.query[@"html"] ) {
                 [controller.webshot renderedHTMLWithCompletion:controller.completion];
             } else {

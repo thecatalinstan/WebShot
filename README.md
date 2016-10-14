@@ -9,7 +9,7 @@ This application is running at [http://webshot.catalinstan.com/](http://webshot.
 *Example URL:*
 
 ```
-[http://webshot.catalinstan.com/shot?url=https://criollo.io/&w=1024&t=2](http://webshot.catalinstan.com/shot?url=https://criollo.io/&w=1024&t=2)
+http://webshot.catalinstan.com/shot?url=https://criollo.io/&w=1024&t=2
 ```
 
 ## CSWebShot

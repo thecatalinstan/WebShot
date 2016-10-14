@@ -7,8 +7,10 @@
 //
 
 #import <WebKit/WebKit.h>
+#import <CSWebShot/CSWebShot.h>
 
 #import "WSShotController.h"
+#import "WSAppDelegate.h"
 
 #define WSShotErrorDomain           @"WSShotErrorDomain"
 #define WSShotErrorNoURL            101
@@ -18,30 +20,18 @@
 #define WSResultActionKey           @"WSResultAction"
 #define WSResultDataKey             @"WSResultData"
 
-typedef void(^WSSuccessBlock)(NSData* data);
-typedef void(^WSFailureBlock)(NSError *error);
-
-typedef enum _WSAction {
-    WSActionScreenshot,
-    WSActionHTML
-} WSAction;
-
 @interface WSShotController () <WebFrameLoadDelegate, WebDownloadDelegate>
 
 @property (nonatomic, strong) CRRequest * request;
 @property (nonatomic, strong) CRResponse * response;
+
 @property (nonatomic, strong) NSURL * targetURL;
-@property (nonatomic, copy) WSSuccessBlock successBlock;
-@property (nonatomic, copy) WSFailureBlock failureBlock;
-@property (nonatomic) WSAction action;
 
-@property (strong, nonatomic) WebView *webView;
-
-- (void)webShotWithURL:(NSURL *)URL;
+@property (nonatomic, strong) CSWebShot * webshot;
+@property (nonatomic, copy) WSCompletionBlock completion;
 
 - (void)succeedWithResult:(NSDictionary *)result request:(CRRequest *)request response:(CRResponse *)response;
 - (void)failWithError:(NSError *)error request:(CRRequest *)request response:(CRResponse *)response;
-
 
 @end
 
@@ -51,38 +41,50 @@ typedef enum _WSAction {
     self = [super initWithPrefix:prefix];
     if ( self != nil ) {
 
-        self.successBlock = ^(NSData *data) { @autoreleasepool {
-            if ( data.length == 0 ) {
-                NSError* error = [NSError errorWithDomain:WSShotErrorDomain code:WSShotErrorNoData userInfo:@{ NSLocalizedDescriptionKey: [NSString stringWithFormat:@"No data was returned from the URL: %@", self.targetURL] }];
-                [self failWithError:error request:self.request response:self.response];
+        self.webshot = [[CSWebShot alloc] initWithURL:nil];
+        self.webshot.delegateQueue = [WSAppDelegate backgroundQueue];
+
+        WSShotController * __weak controller = self;
+        self.completion = ^ (WSAction action, NSData *data, NSError *error ){
+            if ( error ) {
+                [controller failWithError:error request:controller.request response:controller.response];
                 return;
             }
-            [self succeedWithResult:@{ WSResultActionKey: @(self.action), WSResultDataKey: data } request:self.request response:self.response];
-        }};
 
-        self.failureBlock = ^(NSError *error) { @autoreleasepool {
-            [self failWithError:error request:self.request response:self.response];
-        }};
+            if ( data.length == 0 ) {
+                NSError* error = [NSError errorWithDomain:WSShotErrorDomain code:WSShotErrorNoData userInfo:@{ NSLocalizedDescriptionKey: [NSString stringWithFormat:@"No data was returned from the URL: %@", controller.targetURL] }];
+                [controller failWithError:error request:controller.request response:controller.response];
+                return;
+            }
+
+            [controller succeedWithResult:@{ WSResultActionKey: @(action), WSResultDataKey: data } request:controller.request response:controller.response];
+        };
 
         self.routeBlock = ^(CRRequest * _Nonnull request, CRResponse * _Nonnull response, CRRouteCompletionBlock  _Nonnull completionHandler) { @autoreleasepool {
             NSString* targetURLString = [request.query[@"url"] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-            self.targetURL = [NSURL URLWithString:targetURLString];
+            controller.targetURL = [NSURL URLWithString:targetURLString];
             if ( self.targetURL == nil ) {
-                [self failWithError:[NSError errorWithDomain:WSShotErrorDomain code:WSShotErrorNoURL userInfo:request.query] request:request response:response];
+                [controller failWithError:[NSError errorWithDomain:WSShotErrorDomain code:WSShotErrorNoURL userInfo:request.query] request:request response:response];
                 return;
             }
 
-            if ( self.targetURL.scheme == nil ) {
-                self.targetURL = [NSURL URLWithString:[@"http://" stringByAppendingString:self.targetURL.absoluteString]];
-            } else if ( ![self.targetURL.scheme isEqualToString:@"http"] && ![self.targetURL.scheme isEqualToString:@"https"] ) {
-                [self failWithError:[NSError errorWithDomain:WSShotErrorDomain code:WSShotErrorInvalidURL userInfo:request.query] request:request response:response];
+            if ( controller.targetURL.scheme == nil ) {
+                controller.targetURL = [NSURL URLWithString:[@"http://" stringByAppendingString:controller.targetURL.absoluteString]];
+            } else if ( ![controller.targetURL.scheme isEqualToString:@"http"] && ![controller.targetURL.scheme isEqualToString:@"https"] ) {
+                [controller failWithError:[NSError errorWithDomain:WSShotErrorDomain code:WSShotErrorInvalidURL userInfo:request.query] request:request response:response];
                 return;
             }
 
-            self.request = request;
-            self.response = response;
-            self.action = request.query[@"html"] ? WSActionHTML : WSActionScreenshot;
-            [self performSelectorOnMainThread:@selector(webShotWithURL:) withObject:self.targetURL waitUntilDone:YES];
+            controller.request = request;
+            controller.response = response;
+
+            controller.webshot.URL = controller.targetURL;
+
+            if ( request.query[@"html"] ) {
+                [controller.webshot renderedHTMLWithCompletion:controller.completion];
+            } else {
+                [controller.webshot webshotWithCompletion:controller.completion];
+            }
         }};
     }
     return self;
@@ -94,9 +96,9 @@ typedef enum _WSAction {
     WSAction action = (WSAction)[result[WSResultActionKey] integerValue];
 
     NSString* contentType = @"application/json";
-    if (action == WSActionScreenshot) {
+    if (action == WSActionWebShot) {
         contentType = @"image/png";
-    } if (action == WSActionHTML) {
+    } if (action == WSActionFetchHTML) {
         contentType = @"text/html";
     }
 
@@ -157,80 +159,6 @@ typedef enum _WSAction {
     [response setStatusCode:500 description:nil];
     [response setValue:@"application/json; charset=utf-8" forHTTPHeaderField:@"Content-type"];
     [response send:outputDictionary];
-}
-
-#pragma mark - Actions
-
-- (void)webShotWithURL:(NSURL *)URL {
-    self.webView = [[WebView alloc] initWithFrame:NSMakeRect(0, 0, 1280, 10)];
-    self.webView.frameLoadDelegate = self;
-    self.webView.downloadDelegate = self;
-    self.webView.continuousSpellCheckingEnabled = NO;
-    self.webView.mainFrame.frameView.allowsScrolling = NO;
-    
-    NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:URL cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:10.0f];
-    request.HTTPShouldHandleCookies = NO;
-    [self.webView.mainFrame loadRequest:request];
-}
-
-#pragma mark - WebViewFeameLoading Delegate
-
-- (void)webView:(WebView *)sender didFinishLoadForFrame:(WebFrame *)frame {
-    if (frame != sender.mainFrame) {
-        return;
-    }
-
-    NSData* returnData;
-
-    if ( self.action == WSActionHTML ) {
-
-        NSString* renderedContent = ((DOMHTMLElement*)frame.DOMDocument.documentElement).outerHTML;
-        returnData = [renderedContent dataUsingEncoding:NSUTF8StringEncoding];
-
-    } else if ( self.action == WSActionScreenshot ) {
-
-        NSView *webFrameViewDocView = frame.frameView.documentView;
-        NSRect webFrameRect = webFrameViewDocView.frame;
-        NSRect newWebViewRect = NSMakeRect(0, 0, NSWidth(webFrameRect), NSHeight(webFrameRect) == 0 ? frame.webView.fittingSize.height : NSHeight(webFrameRect));
-
-        NSRect cacheRect = newWebViewRect;
-        NSSize imgSize = cacheRect.size;
-        NSRect srcRect = NSZeroRect;
-        srcRect.size = imgSize;
-        srcRect.origin.y = cacheRect.size.height - imgSize.height;
-
-        NSRect destRect = NSZeroRect;
-        destRect.size = imgSize;
-
-        NSBitmapImageRep *bitmapRep = [webFrameViewDocView bitmapImageRepForCachingDisplayInRect:cacheRect];
-        [webFrameViewDocView cacheDisplayInRect:cacheRect toBitmapImageRep:bitmapRep];
-
-        NSImage *image = [[NSImage alloc] initWithSize:imgSize];
-        [image lockFocus];
-        [bitmapRep drawInRect:destRect fromRect:srcRect operation:NSCompositeCopy fraction:1.0 respectFlipped:YES hints:nil];
-        [image unlockFocus];
-
-        NSBitmapImageRep* rep = [[NSBitmapImageRep alloc] initWithData:image.TIFFRepresentation];;
-        returnData = [rep representationUsingType:NSPNGFileType properties:@{}];
-    }
-    
-    self.successBlock(returnData);
-}
-
-//- (void)webView:(WebView *)sender willPerformClientRedirectToURL:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date forFrame:(WebFrame *)frame {
-//}
-
-//- (void)webView:(WebView *)sender didReceiveServerRedirectForProvisionalLoadForFrame:(WebFrame *)frame {
-//}
-
-//- (void)webView:(WebView *)sender didCommitLoadForFrame:(WebFrame *)frame {
-//}
-
-- (void)webView:(WebView *)sender didFailLoadWithError:(NSError *)error forFrame:(WebFrame *)frame {
-    if (frame != sender.mainFrame){
-        return;
-    }
-    self.failureBlock(error);
 }
 
 @end

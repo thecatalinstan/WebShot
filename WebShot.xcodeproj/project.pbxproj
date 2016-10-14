@@ -7,25 +7,29 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7DC71D42DAABD528B4505865 /* Pods_WebShot.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C83995ED9C7D9639FFAFAC42 /* Pods_WebShot.framework */; };
 		ADCF20F11AE8883B007DFDC4 /* com.catalinstan.WebShot.plist in Resources */ = {isa = PBXBuildFile; fileRef = ADCF20F01AE8883B007DFDC4 /* com.catalinstan.WebShot.plist */; };
-		ADD85F5E1AD803B700EC541E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = ADD85F5D1AD803B700EC541E /* AppDelegate.m */; };
+		ADD85F5E1AD803B700EC541E /* WSAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = ADD85F5D1AD803B700EC541E /* WSAppDelegate.m */; };
 		ADD85F601AD803B700EC541E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = ADD85F5F1AD803B700EC541E /* main.m */; };
-		ADDD2AAF1AE3E8E1004F79D9 /* WSShotViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ADDD2AAE1AE3E8E1004F79D9 /* WSShotViewController.m */; };
-		BC08A4B488845B4B69C3F9C9 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A932A791240BE433DB552F05 /* Pods.framework */; };
+		ADDD2AAF1AE3E8E1004F79D9 /* WSShotController.m in Sources */ = {isa = PBXBuildFile; fileRef = ADDD2AAE1AE3E8E1004F79D9 /* WSShotController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		882FFBDC31DAB1C60DCDBBD1 /* Pods-WebShot.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WebShot.debug.xcconfig"; path = "Pods/Target Support Files/Pods-WebShot/Pods-WebShot.debug.xcconfig"; sourceTree = "<group>"; };
 		A932A791240BE433DB552F05 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		AD89D78E1DB0F64900F08105 /* WebShot.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WebShot.entitlements; sourceTree = "<group>"; };
 		ADCF20F01AE8883B007DFDC4 /* com.catalinstan.WebShot.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = com.catalinstan.WebShot.plist; sourceTree = "<group>"; };
 		ADD85F571AD803B700EC541E /* WebShot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WebShot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ADD85F5B1AD803B700EC541E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		ADD85F5C1AD803B700EC541E /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		ADD85F5D1AD803B700EC541E /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		ADD85F5C1AD803B700EC541E /* WSAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WSAppDelegate.h; sourceTree = "<group>"; };
+		ADD85F5D1AD803B700EC541E /* WSAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WSAppDelegate.m; sourceTree = "<group>"; };
 		ADD85F5F1AD803B700EC541E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		ADDD2AAD1AE3E8E1004F79D9 /* WSShotViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WSShotViewController.h; sourceTree = "<group>"; };
-		ADDD2AAE1AE3E8E1004F79D9 /* WSShotViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WSShotViewController.m; sourceTree = "<group>"; };
+		ADDD2AAD1AE3E8E1004F79D9 /* WSShotController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WSShotController.h; sourceTree = "<group>"; };
+		ADDD2AAE1AE3E8E1004F79D9 /* WSShotController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WSShotController.m; sourceTree = "<group>"; };
 		B52C8871E560C86C5190247A /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
+		C83995ED9C7D9639FFAFAC42 /* Pods_WebShot.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WebShot.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFD534DA656164B5AFD7F2FC /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		F8A46D935E3A497A53E12264 /* Pods-WebShot.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WebShot.release.xcconfig"; path = "Pods/Target Support Files/Pods-WebShot/Pods-WebShot.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,7 +37,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BC08A4B488845B4B69C3F9C9 /* Pods.framework in Frameworks */,
+				7DC71D42DAABD528B4505865 /* Pods_WebShot.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -44,6 +48,7 @@
 			isa = PBXGroup;
 			children = (
 				A932A791240BE433DB552F05 /* Pods.framework */,
+				C83995ED9C7D9639FFAFAC42 /* Pods_WebShot.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -53,6 +58,8 @@
 			children = (
 				B52C8871E560C86C5190247A /* Pods.debug.xcconfig */,
 				CFD534DA656164B5AFD7F2FC /* Pods.release.xcconfig */,
+				882FFBDC31DAB1C60DCDBBD1 /* Pods-WebShot.debug.xcconfig */,
+				F8A46D935E3A497A53E12264 /* Pods-WebShot.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -78,10 +85,10 @@
 		ADD85F591AD803B700EC541E /* WebShot */ = {
 			isa = PBXGroup;
 			children = (
-				ADD85F5C1AD803B700EC541E /* AppDelegate.h */,
-				ADD85F5D1AD803B700EC541E /* AppDelegate.m */,
-				ADDD2AAD1AE3E8E1004F79D9 /* WSShotViewController.h */,
-				ADDD2AAE1AE3E8E1004F79D9 /* WSShotViewController.m */,
+				ADD85F5C1AD803B700EC541E /* WSAppDelegate.h */,
+				ADD85F5D1AD803B700EC541E /* WSAppDelegate.m */,
+				ADDD2AAD1AE3E8E1004F79D9 /* WSShotController.h */,
+				ADDD2AAE1AE3E8E1004F79D9 /* WSShotController.m */,
 				ADD85F5A1AD803B700EC541E /* Supporting Files */,
 			);
 			path = WebShot;
@@ -90,6 +97,7 @@
 		ADD85F5A1AD803B700EC541E /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				AD89D78E1DB0F64900F08105 /* WebShot.entitlements */,
 				ADCF20F01AE8883B007DFDC4 /* com.catalinstan.WebShot.plist */,
 				ADD85F5B1AD803B700EC541E /* Info.plist */,
 				ADD85F5F1AD803B700EC541E /* main.m */,
@@ -104,12 +112,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = ADD85F741AD803B700EC541E /* Build configuration list for PBXNativeTarget "WebShot" */;
 			buildPhases = (
-				1EA9F0AAEE4BAE01D2286932 /* Check Pods Manifest.lock */,
+				1EA9F0AAEE4BAE01D2286932 /* [CP] Check Pods Manifest.lock */,
 				ADD85F531AD803B700EC541E /* Sources */,
 				ADD85F541AD803B700EC541E /* Frameworks */,
 				ADD85F551AD803B700EC541E /* Resources */,
-				3BA774CDAC5CB33E78C77489 /* Embed Pods Frameworks */,
-				08EAB90274C2E298B1B6BF4F /* Copy Pods Resources */,
+				3BA774CDAC5CB33E78C77489 /* [CP] Embed Pods Frameworks */,
+				08EAB90274C2E298B1B6BF4F /* [CP] Copy Pods Resources */,
+				AD89D78D1DB0F21700F08105 /* Crashlytics */,
 			);
 			buildRules = (
 			);
@@ -126,11 +135,19 @@
 		ADD85F4F1AD803B700EC541E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0700;
-				ORGANIZATIONNAME = "Catalin Stan";
+				CLASSPREFIX = WS;
+				LastUpgradeCheck = 0800;
+				ORGANIZATIONNAME = "Cătălin Stan";
 				TargetAttributes = {
 					ADD85F561AD803B700EC541E = {
 						CreatedOnToolsVersion = 6.3;
+						DevelopmentTeam = JNX7A8G939;
+						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.Sandbox = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -164,50 +181,64 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		08EAB90274C2E298B1B6BF4F /* Copy Pods Resources */ = {
+		08EAB90274C2E298B1B6BF4F /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Pods Resources";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-WebShot/Pods-WebShot-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		1EA9F0AAEE4BAE01D2286932 /* Check Pods Manifest.lock */ = {
+		1EA9F0AAEE4BAE01D2286932 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Check Pods Manifest.lock";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		3BA774CDAC5CB33E78C77489 /* Embed Pods Frameworks */ = {
+		3BA774CDAC5CB33E78C77489 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Embed Pods Frameworks";
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-WebShot/Pods-WebShot-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		AD89D78D1DB0F21700F08105 /* Crashlytics */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = Crashlytics;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "${PODS_ROOT}/Fabric/run 41b2b87be52ab143a0c7a2fe9c4d179d3799509a d6ca98ecb5a4aa4a03ebb1d823fcb18cf0bf3b20b7df7390e6873d435c0d147f";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -217,8 +248,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				ADD85F601AD803B700EC541E /* main.m in Sources */,
-				ADDD2AAF1AE3E8E1004F79D9 /* WSShotViewController.m in Sources */,
-				ADD85F5E1AD803B700EC541E /* AppDelegate.m in Sources */,
+				ADDD2AAF1AE3E8E1004F79D9 /* WSShotController.m in Sources */,
+				ADD85F5E1AD803B700EC541E /* WSAppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -238,13 +269,15 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -282,8 +315,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "-";
@@ -307,10 +342,13 @@
 		};
 		ADD85F751AD803B700EC541E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B52C8871E560C86C5190247A /* Pods.debug.xcconfig */;
+			baseConfigurationReference = 882FFBDC31DAB1C60DCDBBD1 /* Pods-WebShot.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = WebShot/WebShot.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = JNX7A8G939;
 				INFOPLIST_FILE = WebShot/Info.plist;
 				INSTALL_PATH = /WebApplications;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
@@ -321,10 +359,13 @@
 		};
 		ADD85F761AD803B700EC541E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CFD534DA656164B5AFD7F2FC /* Pods.release.xcconfig */;
+			baseConfigurationReference = F8A46D935E3A497A53E12264 /* Pods-WebShot.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = WebShot/WebShot.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = JNX7A8G939;
 				INFOPLIST_FILE = WebShot/Info.plist;
 				INSTALL_PATH = /WebApplications;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";

@@ -52,6 +52,20 @@
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2015 Catalin Stan. All rights reserved.</string>
 	<key>NSPrincipalClass</key>
-	<string>FKApplication</string>
+	<string>CRApplication</string>
+    <key>Fabric</key>
+    <dict>
+        <key>APIKey</key>
+        <string>41b2b87be52ab143a0c7a2fe9c4d179d3799509a</string>
+        <key>Kits</key>
+        <array>
+            <dict>
+                <key>KitInfo</key>
+                <dict/>
+                <key>KitName</key>
+                <string>Crashlytics</string>
+            </dict>
+        </array>
+    </dict>
 </dict>
 </plist>

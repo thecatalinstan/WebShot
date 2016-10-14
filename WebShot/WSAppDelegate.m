@@ -7,8 +7,8 @@
 //
 
 #import <CSSystemInfoHelper/CSSystemInfoHelper.h>
-//#import <Fabric/Fabric.h>
-//#import <Crashlytics/Crashlytics.h>
+#import <Fabric/Fabric.h>
+#import <Crashlytics/Crashlytics.h>
 
 #import "WSAppDelegate.h"
 #import "WSShotController.h"
@@ -45,11 +45,11 @@ NS_ASSUME_NONNULL_END
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
 
-#ifndef DEBUG
+//#ifndef DEBUG
     [Fabric with:@[[Crashlytics class]]];
     [CrashlyticsKit setUserIdentifier:[CSSystemInfoHelper sharedHelper].platformUUID];
     [CrashlyticsKit setUserName:[CSSystemInfoHelper sharedHelper].systemInfo[CSSystemInfoNodenameKey]];
-#endif
+//#endif
 
     [self setupBaseDirectory];
 

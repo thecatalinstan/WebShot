@@ -116,6 +116,7 @@
 				ADD85F551AD803B700EC541E /* Resources */,
 				3BA774CDAC5CB33E78C77489 /* [CP] Embed Pods Frameworks */,
 				08EAB90274C2E298B1B6BF4F /* [CP] Copy Pods Resources */,
+				AD89D78D1DB0F21700F08105 /* Crashlytics */,
 			);
 			buildRules = (
 			);
@@ -218,6 +219,20 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-WebShot/Pods-WebShot-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		AD89D78D1DB0F21700F08105 /* Crashlytics */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = Crashlytics;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "${PODS_ROOT}/Fabric/run 41b2b87be52ab143a0c7a2fe9c4d179d3799509a d6ca98ecb5a4aa4a03ebb1d823fcb18cf0bf3b20b7df7390e6873d435c0d147f";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -255,7 +270,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;

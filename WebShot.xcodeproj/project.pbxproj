@@ -17,6 +17,7 @@
 /* Begin PBXFileReference section */
 		882FFBDC31DAB1C60DCDBBD1 /* Pods-WebShot.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WebShot.debug.xcconfig"; path = "Pods/Target Support Files/Pods-WebShot/Pods-WebShot.debug.xcconfig"; sourceTree = "<group>"; };
 		A932A791240BE433DB552F05 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		AD89D78E1DB0F64900F08105 /* WebShot.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WebShot.entitlements; sourceTree = "<group>"; };
 		ADCF20F01AE8883B007DFDC4 /* com.catalinstan.WebShot.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = com.catalinstan.WebShot.plist; sourceTree = "<group>"; };
 		ADD85F571AD803B700EC541E /* WebShot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WebShot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ADD85F5B1AD803B700EC541E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -96,6 +97,7 @@
 		ADD85F5A1AD803B700EC541E /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				AD89D78E1DB0F64900F08105 /* WebShot.entitlements */,
 				ADCF20F01AE8883B007DFDC4 /* com.catalinstan.WebShot.plist */,
 				ADD85F5B1AD803B700EC541E /* Info.plist */,
 				ADD85F5F1AD803B700EC541E /* main.m */,
@@ -141,6 +143,11 @@
 						CreatedOnToolsVersion = 6.3;
 						DevelopmentTeam = JNX7A8G939;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.Sandbox = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -338,6 +345,7 @@
 			baseConfigurationReference = 882FFBDC31DAB1C60DCDBBD1 /* Pods-WebShot.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = WebShot/WebShot.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = JNX7A8G939;
@@ -354,6 +362,7 @@
 			baseConfigurationReference = F8A46D935E3A497A53E12264 /* Pods-WebShot.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = WebShot/WebShot.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = JNX7A8G939;

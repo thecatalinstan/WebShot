@@ -13,6 +13,12 @@
 	<key>ProgramArguments</key>
 	<array>
 		<string>/WebApplications/WebShot.app/Contents/MacOS/WebShot</string>
+        <string>-FastCGI</string>
+        <string>NO</string>
+        <string>-Port</string>
+        <string>10020</string>
+        <string>-BaseURL</string>
+        <string>https://criollo.io/</string>
 	</array>
 	<key>RunAtLoad</key>
 	<true/>
@@ -20,5 +26,7 @@
 	<string>FCGIKit WebShot Demo</string>
 	<key>StandardErrorPath</key>
 	<string>/var/log/com.catalinstan.WebShot.log</string>
+    <key>StandardOutPath</key>
+    <string>/var/log/com.catalinstan.WebShot.log</string>
 </dict>
 </plist>
